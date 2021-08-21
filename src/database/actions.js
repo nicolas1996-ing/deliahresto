@@ -2,6 +2,8 @@ const Sequelize = require('sequelize');
 const database = new Sequelize('mysql://root:1088339674@localhost:3306/deliahrestoproyec3');
 
 module.exports.Select = async (query, data) => {
+
+    // retorna 'error' o array de objetos [{}]
     let result;
     try {
         result = await database.query(query, {
@@ -20,6 +22,8 @@ module.exports.Select = async (query, data) => {
 }
 
 module.exports.Insert = async (query, data) => {
+
+    // retorna un array [10, 1] [id, cantObjetosInsertados]
     let result;
     try {
         result = await database.query(query, {
@@ -36,6 +40,8 @@ module.exports.Insert = async (query, data) => {
 }
 
 module.exports.Update = async (query, data) => {
+
+    // retorna arrya [null, 1] [null, numeroEntidadesActualizdas]
     let result;
 
     try {
@@ -53,6 +59,8 @@ module.exports.Update = async (query, data) => {
 }
 
 module.exports.Delete = async (query, data) => {
+
+    // retorna 'undefined'
     let result;
 
     try {

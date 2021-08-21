@@ -12,6 +12,7 @@ module.exports.auth = (req, res, next) => {
         const tokenVerificado = jwt.verify(token, firma);
         if (tokenVerificado) {
             req.user = tokenVerificado;
+            console.log(tokenVerificado);
             return next();
         }
     } catch (error) {
@@ -28,7 +29,7 @@ module.exports.emailValid = (req, res, next) => {
     if (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i.test(email)) {
         next();
     } else {
-        res.status(500).json({ message: "usuario no creado, email invalido", error: email });
+        res.status(500).json({ message: "usuario no creado, email invalido o no existe", error: email });
     }
 }
 
@@ -38,7 +39,7 @@ module.exports.passwordValid = (req, res, next) => {
     if (/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/i.test(password)) {
         next();
     } else {
-        res.status(500).json({ message: "usuario no creado, contraseña invalida", error: password });
+        res.status(500).json({ message: "usuario no creado, contraseña invalida o no existe", error: password });
     }
 }
 
@@ -53,9 +54,14 @@ module.exports.phoneValid = (req, res, next) => {
 
 module.exports.rol = async (req, res, next) => {
 
-    // console.log(req.user.userName)
+    // console.log(req.user)
+
+    const nameUser = req.user.userName ? req.user.userName : req.user.nombreUsuario
+
+    console.log(nameUser)
+
     const user = {
-        userName: req.user.userName
+        userName: nameUser
     };
 
     const verRol = await actions.Select(`SELECT *
@@ -66,11 +72,13 @@ module.exports.rol = async (req, res, next) => {
     if (verRol && Array.isArray(verRol) && verRol.length > 0) {
         if (verRol[0].idRole == 1) {
             return next();
+        } else {
+            res.status(500).json({ message: "el usuario no tiene permisos de administrador", error: verRol[0] });
         }
     }
 
     if (verRol.error) {
-        res.status(500).json({ message: "el usuario no tiene permisos de administrador", error: user });
+        res.status(500).json({ message: "el usuario no tiene permisos de administrador", error: verRol[0] });
     }
 
 }
